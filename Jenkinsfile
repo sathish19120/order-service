@@ -79,7 +79,7 @@ pipeline {
                         sed -i 's|image: .*|image: ${DOCKER_IMAGE}:${IMAGE_TAG}|' k8s/deployment.yaml
                         git add k8s/deployment.yaml
                         git commit -m "Update image to ${IMAGE_TAG} [skip ci]" || echo "No changes"
-                        git push https://${GIT_USER}:${GIT_PASS}@github.com/siddamsettysathish-rgb/order-service.git HEAD:main
+                        git push https://${GIT_USER}:${GIT_PASS}@github.com/sathish19120/order-service.git HEAD:main
                     """
                 }
             }
