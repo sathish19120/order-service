@@ -25,6 +25,14 @@ pipeline {
                 }
             }
         }
+        stage('Install Dependencies & Run Tests') {
+    steps {
+        sh """
+            npm install
+            npm test
+        """
+    }
+}
 
         stage('SonarQube Analysis') {
             steps {
