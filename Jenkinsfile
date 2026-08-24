@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE = "sathishsiddamsetty/order-service"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         REGISTRY_CREDENTIALS = "dockerhub-creds"
-        GIT_CREDENTIALS = "Github-Token"
+        GIT_CREDENTIALS = "Github-Token-sathish19120"
         SONAR_SCANNER_HOME = tool 'SonarScanner'
     }
 
