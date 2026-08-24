@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/siddamsettysathish-rgb/order-service.git
+    repoURL: https://github.com/sathish19120/order-service.git
     targetRevision: main
     path: k8s
   destination:
