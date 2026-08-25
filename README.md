@@ -9,7 +9,19 @@ Simple Order API — first microservice for the E-Commerce Serverless project.
 - `GET /orders/:id` — get one order
 - `PATCH /orders/:id/status` — update status → `{ "status": "SHIPPED" }`
 - `GET /health` — health check (used by K8s probes)
-
+┌─────────────────────────────────┐         ┌──────────────────────────┐
+│   YOUR LAPTOP (Docker Desktop)   │         │      AWS CLOUD           │
+│                                   │         │  (real AWS account)      │
+│  Kubernetes (kind cluster)       │         │                          │
+│  ├── order-service pods          │ ──SQS──▶│  SQS Queue               │
+│  ├── postgres pod                │  msg    │       │                  │
+│  ├── webapp pods                 │         │       ▼                  │
+│  └── Jenkins, SonarQube, etc.    │         │  Lambda Function         │
+│                                   │◀────────│  (calls back via ngrok) │
+│  ngrok tunnel (exposes laptop     │  HTTP   │                          │
+│  to internet so Lambda can        │ PATCH   │                          │
+│  reach it)                        │         │                          │
+└─────────────────────────────────┘         └──────────────────────────┘
 ## Local Test (without Docker)
 
 ```bash
