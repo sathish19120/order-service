@@ -37,6 +37,20 @@ spec:
               value: postgres
             - name: DB_NAME
               value: orders_db
+            - name: SQS_QUEUE_URL
+              value: "https://sqs.us-east-1.amazonaws.com/<YOUR-ACCOUNT-ID>/order-payment-queue"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+              secretKeyRef:
+                name: aws-credentials
+                key: access-key-id
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-credentials
+                key: secret-access-key
+          - name: AWS_REGION
+            value: us-east-1
           readinessProbe:
             httpGet:
               path: /health
