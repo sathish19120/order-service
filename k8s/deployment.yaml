@@ -38,7 +38,7 @@ spec:
             - name: DB_NAME
               value: orders_db
             - name: SQS_QUEUE_URL
-              value: "https://sqs.us-east-1.amazonaws.com/<YOUR-ACCOUNT-ID>/order-payment-queue"
+              value: "https://sqs.us-east-1.amazonaws.com/940348258684/order-payment-queue"
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
               secretKeyRef:
