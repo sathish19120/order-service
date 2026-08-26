@@ -18,7 +18,7 @@ pipeline {
                         returnStdout: true
                     ).trim()
                     echo "Commit author: ${author}"
-                    if (author == 'jenkins-ci') {
+                    if (author == 'sathish19120') {
                         currentBuild.result = 'NOT_BUILT'
                         error("Jenkins own commit — skipping pipeline")
                     }
