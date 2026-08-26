@@ -1,9 +1,9 @@
 const express = require('express');
 const { Pool } = require('pg');
+const { SQSClient, SendMessageCommand } = require('@aws-sdk/client-sqs');
 
 const app = express();
 app.use(express.json());
-
 const PORT = process.env.PORT || 3000;
 
 // PostgreSQL connection pool
@@ -14,6 +14,9 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_NAME || 'orders_db',
 });
+
+// AWS SQS client
+const sqsClient = new SQSClient({ region: process.env.AWS_REGION || 'us-east-1' });
 
 // Create table if not exists on startup
 async function initDb() {
@@ -55,7 +58,24 @@ app.post('/orders', async (req, res) => {
       `INSERT INTO orders (customer_name, item, quantity) VALUES ($1, $2, $3) RETURNING *`,
       [customer_name, item, quantity]
     );
-    res.status(201).json(result.rows[0]);
+
+    const order = result.rows[0];
+
+    // Send message to SQS to trigger payment processing Lambda
+    if (process.env.SQS_QUEUE_URL) {
+      try {
+        await sqsClient.send(new SendMessageCommand({
+          QueueUrl: process.env.SQS_QUEUE_URL,
+          MessageBody: JSON.stringify({ orderId: order.id })
+        }));
+        console.log(`Sent order ${order.id} to payment queue`);
+      } catch (sqsErr) {
+        console.error('Failed to send message to SQS:', sqsErr);
+        // Don't fail the order creation if SQS fails — order still exists
+      }
+    }
+
+    res.status(201).json(order);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create order' });
@@ -91,7 +111,7 @@ app.get('/orders', async (req, res) => {
 app.patch('/orders/:id/status', async (req, res) => {
   try {
     const { status } = req.body;
-    const allowed = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+    const allowed = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'PAID'];
     if (!allowed.includes(status)) {
       return res.status(400).json({ error: `status must be one of ${allowed.join(', ')}` });
     }
