@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: sathishsiddamsetty/order-service:24
+          image: sathishsiddamsetty/order-service:27
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
